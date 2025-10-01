@@ -1,0 +1,20 @@
+ISO Week: 6 (2025-02-03 to 2025-02-09)
+Total Gross Revenue (ex. VAT): 947,292.7
+                                       Metric  Gross Revenue (ex. VAT)
+                                Gross Revenue            947292.686963
+                                  Net Revenue            850011.957084
+                                      Returns             97280.729878
+                                  Return Rate                10.300000
+                                New Customers               239.000000
+                          Returning Customers               319.000000
+                                     Sessions             41370.000000
+                         Orders (Online Only)               655.000000
+                          Conversion Rate (%)                 1.580000
+      Gross Revenue (ex. VAT) - New Customers            354295.493029
+Gross Revenue (ex. VAT) - Returning Customers            592997.193934
+                  AOV New Customers (ex. VAT)              1482.410000
+            AOV Returning Customers (ex. VAT)              1858.930000
+                 Retail Concept Store Revenue             60076.000000
+                       Retail Pop-ups Revenue                 0.000000
+                           Retail Net Revenue             60076.000000
+                            Wholesale Revenue                 0.000000

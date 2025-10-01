@@ -1,0 +1,102 @@
+Sub CopyRangeAsPrintViewToPowerPoint()
+    Dim ws As Worksheet
+    Dim rng As Range
+    Dim pptApp As Object
+    Dim pptPres As Object
+    Dim slide As Object
+    Dim shape As Object
+    Dim pptFilePath As String
+
+    ' ?? Start loggning
+    Debug.Print "=== Startar makrot ==="
+    On Error Resume Next
+
+    ' ? Ange PowerPoint-filens sökväg
+    pptFilePath = "/Users/axelsamuelson/Documents/CDLP_code/weekly_reports/data/powerpoint/weekly_report_2.pptx"
+
+    ' ? Sätt rätt Excel-ark
+    Set ws = ThisWorkbook.Sheets("top_table")
+    If ws Is Nothing Then
+        MsgBox "Fel: Bladet 'top_table' hittades inte!", vbExclamation, "Error"
+        Debug.Print "? Fel: Bladet 'top_table' hittades inte!"
+        Exit Sub
+    End If
+    Debug.Print "? Excel-bladet hittat."
+
+    ' ? Markera område A1:S20
+    Set rng = ws.Range("A1:S20")
+    Debug.Print "? Område A1:S20 valt."
+
+    ' ? Kopiera som utskriftsbild
+    Debug.Print "?? Kopierar området som utskriftsbild..."
+    rng.CopyPicture Appearance:=xlPrinter, Format:=xlPicture
+    Debug.Print "? Området kopierades som utskriftsbild."
+
+    ' ? Försök ansluta till en öppen PowerPoint-instans
+    Debug.Print "?? Startar PowerPoint..."
+    Set pptApp = GetObject(, "PowerPoint.Application")
+    If pptApp Is Nothing Then
+        Set pptApp = CreateObject("PowerPoint.Application")
+        pptApp.Visible = True
+    End If
+    Debug.Print "? PowerPoint startad."
+
+    ' ? Försök hitta presentationen om den redan är öppen
+    Dim pres As Object
+    For Each pres In pptApp.Presentations
+        If pres.FullName = pptFilePath Then
+            Set pptPres = pres
+            Exit For
+        End If
+    Next pres
+
+    ' ? Om presentationen inte är öppen, försök öppna den
+    If pptPres Is Nothing Then
+        Debug.Print "?? Öppnar PowerPoint-fil..."
+        Set pptPres = pptApp.Presentations.Open(pptFilePath, ReadOnly:=msoFalse)
+    End If
+
+    ' ?? Kontrollera om PowerPoint öppnades korrekt
+    If pptPres Is Nothing Then
+        MsgBox "Fel: PowerPoint-filen kunde inte öppnas!", vbExclamation, "Error"
+        Debug.Print "? Fel: PowerPoint-filen kunde inte öppnas!"
+        Exit Sub
+    End If
+    Debug.Print "? PowerPoint-fil öppnad."
+
+    ' ? Välj slide 1
+    Debug.Print "?? Väljer slide 1..."
+    Set slide = pptPres.Slides(1)
+    Debug.Print "? Slide 1 vald."
+
+    ' ? Radera tidigare bild (om den finns)
+    Debug.Print "?? Raderar tidigare bild om den finns..."
+    For Each shape In slide.Shapes
+        If shape.Type = msoPicture Then
+            shape.Delete
+            Debug.Print "? Tidigare bild raderad."
+            Exit For
+        End If
+    Next shape
+
+    ' ? Klistra in bilden i PowerPoint
+    Debug.Print "?? Klistrar in bilden i PowerPoint..."
+    slide.Shapes.Paste
+    Debug.Print "? Bilden klistrades in i PowerPoint!"
+
+    ' ? Spara PowerPoint-filen med den nya bilden
+    pptPres.Save
+    Debug.Print "? PowerPoint-fil sparad."
+
+    ' ? Rensa objekt
+    Set ws = Nothing
+    Set rng = Nothing
+    Set shape = Nothing
+    Set slide = Nothing
+    Set pptPres = Nothing
+    Set pptApp = Nothing
+
+    ' ? Klart!
+    MsgBox "Den gamla bilden har raderats och den nya bilden har klistrats in i slide 1 i PowerPoint!", vbInformation, "Success"
+    Debug.Print "=== Makrot klart ==="
+End Sub

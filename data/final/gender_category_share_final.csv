@@ -1,0 +1,17 @@
+Gender,Product Category,32,33,34,35,36,37,38,39,8-Week Avg
+Men,Underwear,43,48,55,51,49,52,48,55,50
+Men,Tops,26,23,24,32,31,30,31,28,28
+Men,Socks,3,5,6,4,7,6,6,4,5
+Men,Bottoms,4,4,1,-,1,-,4,3,2
+Men,Swim,18,16,9,7,4,4,3,2,8
+Men,Accessories,-,-,-,-,-,-,-,1,-
+Men,Home,-,-,-,1,1,1,1,-,-
+Men,Resort,1,-,-,-,-,-,1,-,-
+Men,Total,96,97,97,96,93,94,94,94,95
+Women,Underwear,2,1,2,2,4,3,5,3,3
+Women,Tops,1,1,-,2,2,2,1,2,1
+Women,Dresses,-,-,-,-,-,-,-,-,-
+Women,Socks,-,-,-,-,-,1,-,-,-
+Women,Swim,-,-,-,-,-,-,-,-,-
+Women,Total,4,3,3,4,7,6,6,6,5
+,Grand Total,100%,100%,100%,100%,100%,100%,100%,100%,100%

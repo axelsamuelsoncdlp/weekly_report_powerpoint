@@ -1,0 +1,80 @@
+Sub RefreshLinkedChartsInPowerPoint()
+    Dim pptApp As Object
+    Dim pptPres As Object
+    Dim slide As Object
+    Dim shape As Object
+    Dim pptFilePath As String
+    Dim xlApp As Object
+    Dim xlWB As Object
+
+    ' ? Ange sökvägen till PowerPoint-filen
+    pptFilePath = "/Users/axelsamuelson/Documents/CDLP_code/weekly_reports/data/powerpoint/weekly_report_2.pptx"
+
+    ' ? Starta Excel och spara den aktiva arbetsboken innan uppdatering
+    On Error Resume Next
+    Set xlApp = GetObject(, "Excel.Application")
+    If xlApp Is Nothing Then Set xlApp = CreateObject("Excel.Application")
+    xlApp.Visible = True
+    Set xlWB = xlApp.ActiveWorkbook
+    If Not xlWB Is Nothing Then xlWB.Save
+    On Error GoTo 0
+
+    ' ? Försök ansluta till en öppen PowerPoint-instans
+    On Error Resume Next
+    Set pptApp = GetObject(, "PowerPoint.Application")
+    On Error GoTo 0
+
+    ' ? Om PowerPoint inte är öppen, starta en ny instans
+    If pptApp Is Nothing Then
+        Set pptApp = CreateObject("PowerPoint.Application")
+        pptApp.Visible = True
+    End If
+
+    ' ? Försök att hitta presentationen om den redan är öppen
+    Dim pres As Object
+    For Each pres In pptApp.Presentations
+        If pres.FullName = pptFilePath Then
+            Set pptPres = pres
+            Exit For
+        End If
+    Next pres
+
+    ' ? Om presentationen inte är öppen, försök öppna den
+    If pptPres Is Nothing Then
+        On Error Resume Next
+        Set pptPres = pptApp.Presentations.Open(pptFilePath, ReadOnly:=msoFalse)
+        On Error GoTo 0
+    End If
+
+    ' ?? Kontrollera om presentationen öppnades korrekt
+    If pptPres Is Nothing Then
+        MsgBox "Fel: PowerPoint-filen kunde inte öppnas! Kontrollera att filen finns och inte är skrivskyddad.", vbExclamation, "Error"
+        Exit Sub
+    End If
+
+    ' ? Gå igenom alla slides och uppdatera länkade diagram
+    For Each slide In pptPres.Slides
+        For Each shape In slide.Shapes
+            ' ?? Om det är ett länkad objekt (Excel-diagram), uppdatera det
+            If shape.Type = msoLinkedOLEObject Or shape.Type = msoLinkedPicture Then
+                shape.LinkFormat.Update
+            End If
+        Next shape
+    Next slide
+
+    ' ? Spara Excel-filen igen för att säkerställa att den är korrekt
+    If Not xlWB Is Nothing Then xlWB.Save
+
+    ' ? Spara PowerPoint-filen med uppdaterade diagram
+    pptPres.Save
+    MsgBox "Alla länkade diagram har uppdaterats och filen har sparats!", vbInformation, "Success"
+
+    ' ?? Rensa objekt
+    Set slide = Nothing
+    Set shape = Nothing
+    Set pptPres = Nothing
+    Set pptApp = Nothing
+    Set xlWB = Nothing
+    Set xlApp = Nothing
+End Sub
+
