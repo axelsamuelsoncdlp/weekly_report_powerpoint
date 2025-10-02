@@ -7,7 +7,7 @@ import time
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 # Define file paths
-EXCEL_FILE_PATH = "/Users/axelsamuelson/Documents/CDLP_code/weekly_reports/macros/top_table.xlsm"
+EXCEL_FILE_PATH = "/Users/axelsamuelson/Documents/CDLP_code/weekly_reports/data/weekly_report.xlsm"
 
 def run_macro():
     """Runs the VBA macro in Excel on macOS."""
