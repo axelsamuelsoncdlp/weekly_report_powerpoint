@@ -15,43 +15,54 @@ from calculator.date_utils import get_last_8_weeks, get_last_8_weeks_last_year
 # ✅ Load data once to reuse
 data = load_data()
 
-def get_top_8_markets():
+# ✅ Load real sessions data with country breakdown
+def load_sessions_data():
+    """Load the updated session_data.csv with country breakdown."""
+    BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    sessions_file = os.path.join(BASE_DIR, "data", "session_data.csv")
+    
+    sessions_df = pd.read_csv(sessions_file, sep=",", decimal=".")
+    sessions_df['Day'] = pd.to_datetime(sessions_df['Day'])
+    
+    print(f"\n📊 **Loaded Sessions Data:**")
+    print(f"  - Total rows: {len(sessions_df)}")
+    print(f"  - Date range: {sessions_df['Day'].min()} to {sessions_df['Day'].max()}")
+    print(f"  - Unique countries: {sessions_df['Session country'].nunique()}")
+    print(f"  - Sample countries: {list(sessions_df['Session country'].dropna().unique()[:10])}")
+    
+    return sessions_df
+
+sessions_data = load_sessions_data()
+
+def get_sessions_markets():
     """
-    Gets the top 8 markets based on revenue from the latest week.
+    Returns the specific markets for sessions data as requested.
+    Markets: Total, USA, Sweden, United Kingdom, Germany, Australia, Canada, France, ROW
     """
-    weeks_list, _ = get_last_8_weeks()
-    latest_week = max(weeks_list, key=lambda x: x["week_start"])
-    start, end = latest_week["week_start"], latest_week["week_end"]
-
-    # ✅ Aggregate revenue by market for the latest week
-    market_revenue = {}
-    for market in data["Country"].unique():
-        if pd.isna(market):  # Skip NaN values
-            continue
-        market_df = data[(data["Country"] == market) & (data["Date"] >= start) & (data["Date"] <= end)]
-        if not market_df.empty:
-            revenue_data = calculate_revenue_metrics(market_df, start, end)
-            revenue = revenue_data.get("Gross Revenue", 0)
-            # Ensure revenue is numeric
-            if pd.isna(revenue):
-                revenue = 0
-            market_revenue[market] = float(revenue)
-
-    # ✅ Sort markets by revenue and get the top 8
-    sorted_markets = sorted(market_revenue.items(), key=lambda x: x[1], reverse=True)
-    top_8_markets = [market for market, _ in sorted_markets[:8]]
-
-    print(f"\n📊 **Top 8 Markets by Revenue (Week {latest_week['week_start'].isocalendar()[1]}):**")
-    for i, (market, revenue) in enumerate(sorted_markets[:8], 1):
-        print(f"  {i}. {market}: {revenue:,.0f} SEK")
-
-    return top_8_markets
+    # Define the exact markets requested: Total, USA, Sweden, United Kingdom, Germany, Australia, Canada, France, ROW
+    markets = [
+        "Total",
+        "United States",  # USA
+        "Sweden", 
+        "United Kingdom",
+        "Germany",
+        "Australia", 
+        "Canada",
+        "France",
+        "ROW"
+    ]
+    
+    print(f"\n📊 **Sessions Markets (Order as specified):**")
+    for i, market in enumerate(markets, 1):
+        print(f"  {i}. {market}")
+    
+    return markets
 
 def calculate_session_market_data(weekly_ranges, year_label):
-    """Calculates weekly session data for top 8 markets for a given set of week ranges."""
+    """Calculates weekly session data for specified markets for a given set of week ranges."""
 
     weekly_sessions = []
-    top_8_markets = get_top_8_markets()  # Call once per year_label
+    markets = get_sessions_markets()  # Call once per year_label
 
     for week in weekly_ranges:
         start_date, end_date = week["week_start"], week["week_end"]
@@ -60,25 +71,41 @@ def calculate_session_market_data(weekly_ranges, year_label):
 
         print(f"\n📆 Processing {year_label}: Week {iso_week} ({start_date} to {end_date})")
 
-        for market in top_8_markets:
-            # ✅ Filter data for the current market & week
-            market_df = data[(data["Country"] == market) & (data["Date"] >= start_date) & (data["Date"] <= end_date)]
-
-            if market_df.empty:
-                sessions = 0
-                print(f"  ⚠️ No data found for {market} in week {iso_week}")
+        for market in markets:
+            # ✅ Get real sessions data from session_data.csv
+            if market == "Total":
+                # Sum all sessions for this week - convert dates to datetime for comparison
+                week_sessions_data = sessions_data[
+                    (sessions_data["Day"] >= pd.to_datetime(start_date)) & 
+                    (sessions_data["Day"] <= pd.to_datetime(end_date))
+                ]
+                sessions = int(week_sessions_data["Sessions"].sum())
+                print(f"  📊 {market}: {sessions:,} sessions (total from all countries)")
+            elif market == "ROW":
+                # Sum all countries except the specific ones listed
+                specific_markets = ["United States", "Sweden", "United Kingdom", "Germany", "Australia", "Canada", "France"]
+                week_sessions_data = sessions_data[
+                    (sessions_data["Day"] >= pd.to_datetime(start_date)) & 
+                    (sessions_data["Day"] <= pd.to_datetime(end_date)) & 
+                    (~sessions_data["Session country"].isin(specific_markets)) &
+                    (sessions_data["Session country"].notna())
+                ]
+                sessions = int(week_sessions_data["Sessions"].sum())
+                if sessions > 0:
+                    countries_count = week_sessions_data["Session country"].nunique()
+                    print(f"  📊 {market}: {sessions:,} sessions (from {countries_count} other countries)")
+                else:
+                    print(f"  📊 {market}: {sessions:,} sessions (ROW)")
             else:
-                # ✅ Calculate sessions as a proxy based on market size
-                # Use unique customers as a proxy for sessions
-                unique_customers = market_df['Customer E-mail'].nunique()
-                unique_orders = market_df['Order No'].nunique()
-
-                # Estimate sessions based on customers and orders
-                # Typical e-commerce: 3-5 sessions per customer, 1-2 sessions per order
-                estimated_sessions = max(unique_customers * 4, unique_orders * 1.5)
-                sessions = int(estimated_sessions)
-
-                print(f"  📊 {market}: {sessions:,} sessions (est. from {unique_customers:,} customers, {unique_orders:,} orders)")
+                # Get sessions for specific country
+                country_name = market  # Market names match country names in session data
+                week_sessions_data = sessions_data[
+                    (sessions_data["Day"] >= pd.to_datetime(start_date)) & 
+                    (sessions_data["Day"] <= pd.to_datetime(end_date)) & 
+                    (sessions_data["Session country"] == country_name)
+                ]
+                sessions = int(week_sessions_data["Sessions"].sum()) if not week_sessions_data.empty else 0
+                print(f"  📊 {market}: {sessions:,} sessions (real data from sessions_data.csv)")
 
             # ✅ Append data with "Year Type", "Calendar Year", "ISO Week", "Market", and "Sessions"
             weekly_sessions.append({
@@ -141,3 +168,4 @@ print(f"📊 **Total rows:** {len(sessions_final)}")
 print(f"📊 **Markets:** {sessions_final['Market'].nunique()}")
 print(f"📊 **Weeks:** {sessions_final['ISO Week'].nunique()}")
 print(f"📊 **Years:** {sessions_final['Year Type'].nunique()}")
+
