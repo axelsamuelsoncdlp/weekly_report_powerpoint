@@ -30,7 +30,7 @@ def update_gender_category_growth_excel():
 
     # ✅ Define file paths
     BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
-    EXCEL_FILE = os.path.join(BASE_DIR, "macros", "top_table.xlsm")
+    EXCEL_FILE = os.path.join(BASE_DIR, "data", "weekly_report.xlsm")
     CSV_FILE = os.path.join(BASE_DIR, "data", "final", "gender_category_growth_final.csv")
 
     # ✅ Ensure the Excel file exists

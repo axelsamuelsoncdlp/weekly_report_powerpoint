@@ -12,7 +12,7 @@ BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 CSV_FINAL_PATH = os.path.join(BASE_DIR, "data", "final", "top_markets_final.csv")  # Formatted Revenue
 CSV_GROWTH_PATH = os.path.join(BASE_DIR, "data", "final", "top_markets_growth_final.csv")  # Revenue Growth
 CSV_SHARE_PATH = os.path.join(BASE_DIR, "data", "final", "top_markets_share_final.csv")  # Revenue Share
-EXCEL_FILE_PATH = os.path.join(BASE_DIR, "macros", "top_table.xlsm")  # Output Excel file
+EXCEL_FILE_PATH = os.path.join(BASE_DIR, "data", "weekly_report.xlsm")  # Output Excel file
 SHEET_NAME = "top_markets"  # Excel sheet to update
 
 def update_excel_with_top_markets():

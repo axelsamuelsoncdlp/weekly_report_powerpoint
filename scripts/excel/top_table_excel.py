@@ -46,7 +46,7 @@ def update_top_table():
 
     # ✅ Define file paths
     BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
-    EXCEL_FILE = os.path.join(BASE_DIR, "macros", "top_table.xlsm")
+    EXCEL_FILE = os.path.join(BASE_DIR, "data", "weekly_report.xlsm")
     FINAL_DATA_DIR = os.path.join(BASE_DIR, "data/final")
 
     # ✅ File paths for finalized data

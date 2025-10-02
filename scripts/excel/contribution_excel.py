@@ -38,7 +38,7 @@ def update_contribution_excel():
 
     # ✅ Define file paths
     BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
-    EXCEL_FILE = os.path.join(BASE_DIR, "macros", "top_table.xlsm")
+    EXCEL_FILE = os.path.join(BASE_DIR, "data", "weekly_report.xlsm")
     CSV_FILE = os.path.join(BASE_DIR, "data", "final", "contribution_final.csv")
 
     # ✅ Ensure the Excel file exists
