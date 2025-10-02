@@ -74,8 +74,8 @@ def update_aov_new_markets_excel():
 
             if isinstance(val, (int, float)):
                 if pd.notna(val):
-                    cell.value = round(val, 2)  # ✅ Keep 2 decimal places for AOV currency
-                    cell.number_format = "#,##0.00"  # ✅ Apply currency formatting: thousand separator with 2 decimals
+                    cell.value = int(round(val))  # ✅ Round to whole number for AOV
+                    cell.number_format = "#,##0"  # ✅ Apply currency formatting: thousand separator without decimals
                     print(f" → Converted to AOV: ${cell.value}")
                 else:
                     cell.value = None

@@ -72,11 +72,11 @@ def sort_and_save_aov_new_data(input_file, csv_output):
     print("\n📊 **Step 5: AOV New Data After Pivoting**")
     print(df_pivot.head(10))
 
-    # Keep numeric values as-is without string formatting for Excel compatibility
+    # Round AOV to whole numbers for cleaner display
     for col in iso_weeks_sorted:
         if col in df_pivot.columns:
             df_pivot[col] = df_pivot[col].apply(
-                lambda x: round(x, 2) if pd.notna(x) else None
+                lambda x: int(round(x)) if pd.notna(x) else None
             )
 
     print("\n📊 **Step 6: AOV New Data After Final Formatting**")
