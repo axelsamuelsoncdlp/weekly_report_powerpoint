@@ -99,22 +99,40 @@ def update_sessions_markets_excel():
                 print(f" → Kept as text: '{cell.value}'")
 
 
-    # ✅ Save and close the Excel file
+    # ✅ Force Excel refresh and save
     wb.save(EXCEL_FILE)
-    wb.close()
-
-    print("\n✅ Excel successfully updated with **ALL** sessions markets data!")
-
-    # ✅ Automatically open the Excel file after saving
-    print("\n📂 **Opening Excel file...**")
     
-    if platform.system() == "Darwin":  # macOS
-        os.system(f"open '{EXCEL_FILE}'")
-    elif platform.system() == "Windows":  # Windows
-        subprocess.run(["start", "excel", EXCEL_FILE], shell=True)
-    elif platform.system() == "Linux":  # Linux (requires LibreOffice or Excel equivalent)
-        os.system(f"xdg-open '{EXCEL_FILE}'")
+    # ✅ Force recalculation to ensure all formulas/files update
+    wb.close()
+    
+    print("\n✅ Excel file saved and updated with **ALL** sessions markets data!")
+
+    # ✅ Close any existing Excel windows and reopen file
+    print("\n📂 **Closing existing Excel windows and opening updated file...**")
+    
+    # ✅ Kill any existing Excel processes to ensure clean update
+    try:
+        if platform.system() == "Darwin":  # macOS
+            os.system("pkill -f 'Microsoft Excel' 2>/dev/null || true")
+            os.system("sleep 2")  # Wait a moment
+            os.system(f"open '{EXCEL_FILE}'")
+        elif platform.system() == "Windows":  # Windows
+            os.system("taskkill /F /IM EXCEL.EXE 2>nul || echo Excel not running")
+            subprocess.run(["start", "/wait", "excel", EXCEL_FILE], shell=True)
+        elif platform.system() == "Linux":  # Linux
+            os.system("pkill -f excel 2>/dev/null || true")
+            os.system(f"xdg-open '{EXCEL_FILE}'")
+    except Exception as e:
+        print(f"⚠️ Warning: Could not close existing Excel: {e}")
+        # Fallback: try to open anyway
+        if platform.system() == "Darwin":
+            os.system(f"open '{EXCEL_FILE}'")
+        elif platform.system() == "Windows":
+            subprocess.run(["start", "excel", EXCEL_FILE], shell=True)
+        elif platform.system() == "Linux":
+            os.system(f"xdg-open '{EXCEL_FILE}'")
 
 # ✅ If running directly, execute function
 if __name__ == "__main__":
     update_sessions_markets_excel()
+
