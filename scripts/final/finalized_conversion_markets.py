@@ -70,10 +70,10 @@ def sort_and_save_conversion_data(input_file, csv_output):
     print("\n📊 **Step 5: Conversion Data After Pivoting**")
     print(df_pivot.head(10))
 
-    # Apply formatting - conversion rates should be displayed as percentages with 2 decimals
+    # Apply formatting - conversion rates should be displayed as percentages with 1 decimal
     for col in iso_weeks_sorted:
         if col in df_pivot.columns:
-            df_pivot[col] = df_pivot[col].apply(lambda x: f"{x:.2f}%" if pd.notna(x) else "-")
+            df_pivot[col] = df_pivot[col].apply(lambda x: f"{x:.1f}%" if pd.notna(x) else "-")
 
     print("\n📊 **Step 6: Conversion Data After Final Formatting**")
     print(df_pivot.head(10))

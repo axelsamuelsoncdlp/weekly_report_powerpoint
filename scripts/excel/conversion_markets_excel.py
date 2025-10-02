@@ -92,10 +92,10 @@ def update_conversion_markets_excel():
                     decimal_value = val / 100
                     cell.value = decimal_value
                     
-                    # ✅ Apply percentage formatting: 2 decimal places for conversion rates
-                    cell.number_format = "0.00%"
+                    # ✅ Apply percentage formatting: 1 decimal place for conversion rates
+                    cell.number_format = "0.0%"
                     
-                    print(f" → Converted to decimal: {decimal_value:.4f} (will display as {val:.2f}%)")
+                    print(f" → Converted to decimal: {decimal_value:.4f} (will display as {val:.1f}%)")
                 else:
                     cell.value = None
                     print(f" → Set to None (NaN)")
