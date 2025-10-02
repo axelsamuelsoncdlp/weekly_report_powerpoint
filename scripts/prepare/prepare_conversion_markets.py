@@ -67,8 +67,8 @@ def country_match_mapping():
     Maps session country names to order country names where they differ
     """
     mapping = {
-        "United States": "USA",
-        "United Kingdom": "UK", 
+        "United States": "United States",  # Both use same name
+        "United Kingdom": "United Kingdom",  # Both use same name
         # Add other mappings as needed
     }
     return mapping
