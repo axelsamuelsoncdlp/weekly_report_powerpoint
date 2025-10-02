@@ -90,7 +90,11 @@ def update_sessions_markets_excel():
             if isinstance(val, (int, float)):
                 if pd.notna(val):
                     cell.value = float(val)  # ✅ Convert to float for proper Excel formatting
-                    print(f" → Converted to float: {cell.value}")
+                    
+                    # ✅ Apply consistent number formatting: 1 decimal place
+                    cell.number_format = "0.0"
+                    
+                    print(f" → Converted to float with 1 decimal format: {cell.value}")
                 else:
                     cell.value = None  # ✅ Handle NaN values
                     print(f" → Set to None (NaN)")
